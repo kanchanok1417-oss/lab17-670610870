@@ -73,8 +73,7 @@ export function AddNewCourseDialog() {
   const addCourse = useEnrollmentStore((s) => s.addCourse);
   const courses = useEnrollmentStore((s) => s.courses);
   const [open, setOpen] = useState(false);
-
-  // schema ต้องสร้างใหม่เมื่อ courses เปลี่ยน เพื่อให้ .refine() กันรหัสซ้ำเห็นข้อมูลล่าสุด
+  
   const schema = useMemo(() => createCourseFormSchema(courses), [courses]);
 
   const form = useForm<CourseFormValues>({
@@ -110,7 +109,6 @@ export function AddNewCourseDialog() {
 
   const resetForm = () => form.reset(emptyCourseForm);
 
-  // ถึงจุดนี้แปลว่า Zod validate ผ่านแล้วทุก field (ค่าถูก trim แล้วด้วย)
   function onSubmit(values: CourseFormValues) {
     addCourse(values);
     resetForm();
