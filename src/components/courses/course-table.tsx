@@ -1,4 +1,5 @@
 import { ConfirmDeleteButton } from "@/components/confirm-button";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -20,7 +21,11 @@ export function CourseTable() {
           <TableRow>
             <TableHead>รหัสวิชา</TableHead>
             <TableHead>ชื่อวิชา</TableHead>
+            <TableHead>หลักสูตร</TableHead>
+            <TableHead>ภาคการศึกษา</TableHead>
+            <TableHead>รายละเอียด</TableHead>
             <TableHead>ผู้สอน</TableHead>
+            <TableHead>รับข่าวสารทางอีเมล</TableHead>
             <TableHead className="w-20">Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -28,7 +33,7 @@ export function CourseTable() {
           {courses.length === 0 && (
             <TableRow>
               <TableCell
-                colSpan={4}
+                colSpan={8}
                 className="h-20 text-center text-muted-foreground"
               >
                 ยังไม่มีวิชาที่เปิดสอน
@@ -38,14 +43,50 @@ export function CourseTable() {
           {courses.map((course) => (
             <TableRow key={course.courseId}>
               <TableCell>{course.courseId}</TableCell>
-              <TableCell>{course.courseTitle}</TableCell>
+              <TableCell className="whitespace-normal">
+                {course.courseTitle}
+              </TableCell>
               <TableCell>
-                {/* แสดงรายชื่อผู้สอนเป็นข้อความธรรมดา คั่นด้วย ", " */}
+                {course.program ? (
+                  <Badge variant="outline">{course.program}</Badge>
+                ) : (
+                  <span className="text-muted-foreground">—</span>
+                )}
+              </TableCell>
+              <TableCell className="font-medium">
+                {course.semester === "3" ? (
+                  "ภาคฤดูร้อน"
+                ) : course.semester ? (
+                  `ภาคการศึกษาที่ ${course.semester}`
+                ) : (
+                  <span className="text-muted-foreground">—</span>
+                )}
+              </TableCell>
+              <TableCell className="max-w-48 whitespace-normal">
+                <span className="text-muted-foreground">
+                  {course.description || "—"}
+                </span>
+              </TableCell>
+              <TableCell>
                 {course.instructors.length === 0 ? (
                   <span className="text-muted-foreground">ยังไม่มีผู้สอน</span>
                 ) : (
-                  course.instructors.join(", ")
+                  <ul className="space-y-1">
+                    {course.instructors.map((i) => (
+                      <li key={i.email} className="leading-tight">
+                        <div>{i.name}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {i.email}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
                 )}
+              </TableCell>
+              <TableCell>
+                <Badge variant={course.notifyByEmail ? "default" : "secondary"}>
+                  {course.notifyByEmail ? "รับ" : "ไม่รับ"}
+                </Badge>
               </TableCell>
               <TableCell>
                 <ConfirmDeleteButton

@@ -8,6 +8,8 @@ import {
 } from "@/lib/mock-data";
 import type { Course, Enrollment, Student } from "@/lib/types";
 
+const STORAGE_KEY = "lab17-2569-670610870";
+
 type EnrollmentStore = {
   students: Student[];
   courses: Course[];
@@ -48,7 +50,7 @@ export const useEnrollmentStore = create<EnrollmentStore>()(
               ? {
                   ...course,
                   instructors: course.instructors.filter(
-                    (name) => name !== instructor,
+                    (i) => i.name !== instructor,
                   ),
                 }
               : course,
@@ -61,6 +63,9 @@ export const useEnrollmentStore = create<EnrollmentStore>()(
           enrollments: state.enrollments.filter((e) => e.courseId !== courseId),
         })),
     }),
-    // เก็บเฉพาะ students/courses ลง localStorage — enrollments ไม่ persist
+    {
+      name: STORAGE_KEY,
+      partialize: (s) => ({ students: s.students, courses: s.courses }),
+    },
   ),
 );
